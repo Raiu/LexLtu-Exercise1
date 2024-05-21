@@ -1,4 +1,4 @@
-﻿using System.Net.Http.Headers;
+﻿using System.Globalization;
 using System.Text;
 
 namespace Exercise1
@@ -25,80 +25,38 @@ namespace Exercise1
         }
     }
 
-    class EmployeeDatabase
+    class EmployeeRegistry
     {
-        public List<Employee> Database { get; set; }
+        public List<Employee> Registry { get; set; }
 
-        public EmployeeDatabase()
+        public EmployeeRegistry()
         {
-            Database = new();
+            Registry = new();
         }
 
         public void AddEmployee(string firstName, string lastName, double Salary)
         {
             Employee employee = new Employee(firstName, lastName, Salary);
-            Database.Add(employee);
+            Registry.Add(employee);
         }
     }
 
 
-    internal class Program
+    class Program
     {
-        private (string, string[]) ParseInput(string input)
+        private EmployeeRegistry Book;
+        private readonly CultureInfo Culture = new CultureInfo("sv-SE");
+
+        static void Main(string[] args)
         {
-            input = input.Trim();
-            if (input.Length == 0)
-            {
-                return ("", Array.Empty<string>());
-            }
-
-            string[] segments = input.Split(' ');
-            string[] arguments = segments.Skip(1).ToArray();
-            return (segments[0], arguments);
-        }
-
-        private void WriteWelcome()
-        {
-            StringBuilder sb = new();
-            sb.Append("\nWelcome!\nAdd new employe with command \"add name salary\"");
-            sb.Append("\nYou can print the current record with the command \"print\"");
-            sb.Append("\nUse command \"quit\" when you are done\n");
-            sb.Append("We currently only accept first names and salaries in real numbers");
-            Console.WriteLine(sb.ToString());
-        }
-
-        private void Add(EmployeeDatabase book, string[] employeeData)
-        {
-            if (employeeData.Length < 3) {
-                Console.WriteLine($"{String.Join(' ', employeeData)} is not a valid input string for the add command");
-                return;
-            }
-
-            string firstName = employeeData[0];
-            string lastName = employeeData[1];
-            if (!double.TryParse(employeeData[2], out double salary))
-            {
-                Console.WriteLine($"{employeeData[2]} is not valid salary value");
-                return;
-            }
-
-            book.AddEmployee(firstName, lastName, salary);
-            Console.WriteLine($"Added employee: {firstName} {lastName} with salary: {salary}");
-        }
-
-        private void Print(EmployeeDatabase book)
-        {
-            foreach (Employee employee in book.Database)
-            {
-                 Console.WriteLine($"Name: {employee.FirstName} {employee.LastName} Salary: {employee.Salary}");
-            }
+            Program program = new Program();
+            program.Book = new();
+            program.run();
         }
 
         private void run()
         {
-            EmployeeDatabase book = new();
-
-            WriteWelcome();
+            PrintWelcomeMessage();
 
             bool running = true;
             while (running)
@@ -117,24 +75,72 @@ namespace Exercise1
                         running = false;
                         break;
                     case "add":
-                        Add(book, arguments);
+                        AddEmployee(arguments);
                         break;
                     case "print":
-                        Print(book);
+                        PrintEmployees();
                         break;
                     default:
                         Console.WriteLine($"{command} is an invalid command");
                         break;
                 }
+
+                Console.WriteLine("\nEnter your command:");
             }
             Console.WriteLine("Exiting");
             Environment.Exit(1);
         }
 
-        static void Main(string[] args)
+        private (string, string[]) ParseInput(string input)
         {
-            Program program = new Program();
-            program.run();
+            if (string.IsNullOrWhiteSpace(input))
+            {
+                return ("", Array.Empty<string>());
+            }
+
+            string[] segments = input.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+            string command = segments[0];
+            string[] arguments = segments.Skip(1).ToArray();
+            return (command, arguments);
+        }
+
+        private void PrintWelcomeMessage()
+        {
+            StringBuilder sb = new();
+            sb.AppendLine("\nWelcome to the Employee Registry!");
+            sb.AppendLine("Commands:");
+            sb.AppendLine("   add <first name> <last name> <salary>      Add a new employee to the registry");
+            sb.AppendLine("   print      Prints all records in the Employee Registry");
+            sb.AppendLine("   quit       Exit current sessions");
+            sb.AppendLine("\nEnter your command:");
+            Console.WriteLine(sb.ToString());
+        }
+
+        private void AddEmployee(string[] employeeData)
+        {
+            if (employeeData.Length != 3) {
+                Console.WriteLine($"{String.Join(' ', employeeData)} is not a valid input string for the add command");
+                return;
+            }
+
+            string firstName = employeeData[0];
+            string lastName = employeeData[1];
+            if (!double.TryParse(employeeData[2], Culture, out double salary))
+            {
+                Console.WriteLine($"{employeeData[2]} is not valid salary value");
+                return;
+            }
+
+            Book.AddEmployee(firstName, lastName, salary);
+            Console.WriteLine($"Added employee: {firstName} {lastName} with salary: {salary}");
+        }
+
+        private void PrintEmployees()
+        {
+            foreach (Employee employee in Book.Registry)
+            {
+                 Console.WriteLine($"Name: {employee.FirstName} {employee.LastName} Salary: {employee.Salary}");
+            }
         }
     }
 }
