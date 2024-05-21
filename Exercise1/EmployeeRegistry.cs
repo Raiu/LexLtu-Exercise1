@@ -8,7 +8,7 @@ namespace Exercise1
 {
     class EmployeeRegistry
     {
-        public List<Employee> Registry { get; set; }
+        public List<Employee> Registry { get; private set; }
 
         public EmployeeRegistry()
         {

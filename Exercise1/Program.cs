@@ -17,12 +17,12 @@ namespace Exercise1
 
     class Program
     {
-        private EmployeeRegistry Book {  get; set; } = new EmployeeRegistry();
-        private readonly CultureInfo Culture = new CultureInfo("sv-SE");
+        private EmployeeRegistry Book { get; set; } = new();
+        private readonly CultureInfo Culture = new("sv-SE");
 
         static void Main(string[] args)
         {
-            Program program = new Program();
+            Program program = new();
 
             program.PrintWelcomeMessage();
             program.PrintHelp();
@@ -99,7 +99,8 @@ namespace Exercise1
 
         private void AddEmployee(string[] employeeData)
         {
-            if (employeeData.Length != 3) {
+            if (employeeData.Length != 3)
+            {
                 Console.WriteLine($"{String.Join(' ', employeeData)} is not a valid input");
                 Console.WriteLine("Usage:   add <first name> <last name> <salary>");
                 return;
@@ -127,7 +128,7 @@ namespace Exercise1
 
             foreach (Employee employee in Book.Registry)
             {
-                 Console.WriteLine($"Name: {employee.FirstName} {employee.LastName} Salary: {employee.Salary}");
+                Console.WriteLine($"Name: {employee.FirstName} {employee.LastName} Salary: {employee.Salary}");
             }
         }
     }
