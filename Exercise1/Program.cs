@@ -57,22 +57,26 @@ namespace Exercise1
         static void Main(string[] args)
         {
             Program program = new Program();
+
+            program.PrintWelcomeMessage();
+            program.PrintHelp();
             program.run();
+
+            Environment.Exit(1);
         }
 
         private void run()
         {
-            PrintWelcomeMessage();
-
             bool running = true;
             while (running)
             {
+                Console.WriteLine("\nEnter your command:");
+
                 string? input = Console.ReadLine();
 
                 if (string.IsNullOrWhiteSpace(input))
                 {
                     Console.WriteLine("Error: Invalid input");
-                    Console.WriteLine("Enter your command:");
                     continue;
                 }
 
@@ -81,6 +85,7 @@ namespace Exercise1
                 switch (command.ToLower())
                 {
                     case "quit":
+                    case "exit":
                         running = false;
                         break;
                     case "add":
@@ -89,15 +94,15 @@ namespace Exercise1
                     case "print":
                         PrintEmployees();
                         break;
+                    case "help":
+                        PrintHelp();
+                        break;
                     default:
                         Console.WriteLine($"{command} is an invalid command");
                         break;
                 }
-
-                Console.WriteLine("\nEnter your command:");
             }
             Console.WriteLine("Exiting");
-            Environment.Exit(1);
         }
 
         private (string, string[]) ParseInput(string input)
@@ -108,15 +113,21 @@ namespace Exercise1
             return (command, arguments);
         }
 
+        private void PrintHelp()
+        {
+            StringBuilder sb = new();
+            sb.AppendLine("\nCommands:");
+            sb.AppendLine("   add <first name> <last name> <salary>   Add a new employee to the registry");
+            sb.AppendLine("   print                                   Prints all records in the Employee Registry");
+            sb.AppendLine("   quit || exit                            Exit current sessions");
+            sb.AppendLine("   help                                    Print help and usage");
+            Console.WriteLine(sb.ToString());
+        }
+
         private void PrintWelcomeMessage()
         {
             StringBuilder sb = new();
             sb.AppendLine("\nWelcome to the Employee Registry!");
-            sb.AppendLine("Commands:");
-            sb.AppendLine("   add <first name> <last name> <salary>      Add a new employee to the registry");
-            sb.AppendLine("   print      Prints all records in the Employee Registry");
-            sb.AppendLine("   quit       Exit current sessions");
-            sb.AppendLine("\nEnter your command:");
             Console.WriteLine(sb.ToString());
         }
 
@@ -142,6 +153,12 @@ namespace Exercise1
 
         private void PrintEmployees()
         {
+            if (Book.Registry.Count == 0)
+            {
+                Console.WriteLine("No records in the registry. Please add an employee.");
+                return;
+            }
+
             foreach (Employee employee in Book.Registry)
             {
                  Console.WriteLine($"Name: {employee.FirstName} {employee.LastName} Salary: {employee.Salary}");
