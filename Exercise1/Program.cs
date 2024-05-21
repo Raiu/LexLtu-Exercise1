@@ -1,5 +1,9 @@
-﻿using System.Globalization;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
+using System.Globalization;
 
 namespace Exercise1
 {
@@ -10,44 +14,6 @@ namespace Exercise1
      *      RecordBook should contain said record and be able to add and remove employes from said recod in either list or dict
      *      Employee should contain properties for handling Firstname, Surname and salaries and some validation.
      */
-
-    class Employee
-    {
-        public int ID { get; set; }
-        public string FirstName { get; set; }
-        public string LastName { get; set; }
-        public double Salary { get; set; }
-
-        public Employee(string firstName, string lastName, double salary)
-        {
-            ID = new Random().Next(int.MinValue, int.MaxValue);
-            FirstName = firstName;
-            LastName = lastName;
-            Salary = salary;
-        }
-    }
-
-    class EmployeeRegistry
-    {
-        public List<Employee> Registry { get; set; }
-
-        public EmployeeRegistry()
-        {
-            Registry = new();
-        }
-
-        public void AddEmployee(string firstName, string lastName, double Salary)
-        {
-            Employee employee = new Employee(firstName, lastName, Salary);
-            Registry.Add(employee);
-        }
-
-        public void RemoveEmployee(string firstName, string lastName)
-        {
-
-        }
-    }
-
 
     class Program
     {
